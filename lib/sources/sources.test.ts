@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fromDevpost, parseDevpostDates } from "./devpost";
-import { fetchCurated, lumaSlug } from "./curated";
+import { fetchCurated, fromPartiful, lumaSlug, partifulId, type PartifulPage } from "./curated";
 import { fetchDiscoverEntries, fromDiscoverEntry, ORGANISER_CALENDARS, suggestCalendars } from "./luma";
 import { currentSeason, fromMlh, parseMlhPage } from "./mlh";
 
@@ -57,17 +57,50 @@ describe("curated", () => {
 
   it("returns null for non-Luma URLs", () => expect(lumaSlug("https://example.com/hack")).toBeNull());
 
-  it("fetches Luma entries and trusts every curated event", async () => {
-    const lookup = async (slug: string) => ({
+  it("reads Partiful IDs", () => {
+    expect(partifulId("https://partiful.com/e/pQHQrWPg1A6P31AYZMTd?c=x")).toBe("pQHQrWPg1A6P31AYZMTd");
+    expect(partifulId("https://luma.com/claude-hd83")).toBeNull();
+  });
+
+  const partifulPage = (locationInfo: PartifulPage["event"]["locationInfo"], timezone = "Europe/London"): PartifulPage => ({
+    event: { id: "abc", title: "Agents Hack", startDate: "2026-10-03T09:00:00.000Z", timezone, locationInfo },
+    hosts: [{ name: "Hack Co" }],
+  });
+
+  it.each([
+    ["structured", { type: "structured", displayName: "Datadog", displayAddressLines: ["1 Fore St", "London EC2Y 9DT"] }, "Datadog, 1 Fore St, London EC2Y 9DT"],
+    ["freeform", { type: "freeform", value: "Shoreditch, London" }, "Shoreditch, London"],
+    ["approximate", { type: "structured", mapsInfo: { approximateLocation: "London, UK" } }, "London, UK"],
+    ["hidden", { type: "freeform", value: "" }, "London"],
+  ])("maps a %s Partiful location", (_, locationInfo, venue) => {
+    expect(fromPartiful(partifulPage(locationInfo))).toMatchObject({
+      url: "https://partiful.com/e/abc",
+      organiser: "Hack Co",
+      venue,
+    });
+  });
+
+  it("does not assume London for hidden venues outside the UK", () => {
+    expect(fromPartiful(partifulPage(null, "America/New_York")).venue).toBeUndefined();
+  });
+
+  it("resolves Luma and Partiful links and trusts every curated event", async () => {
+    const luma = async (slug: string) => ({
       event: { name: "Builder Cohort", start_at: "2026-10-01T13:00:00Z", url: slug, coordinate: null },
       calendar: { name: "Claude Startups" },
     });
+    const partiful = async () => partifulPage({ type: "freeform", value: "London" });
     const events = await fetchCurated(
-      ["https://luma.com/claude-hd83", { title: "Off-Luma Hack", start: "2026-10-02", allDay: true, url: "https://example.com/hack", venue: "London" }],
-      lookup,
+      [
+        "https://luma.com/claude-hd83",
+        "https://partiful.com/e/abc",
+        { title: "Off-Luma Hack", start: "2026-10-02", allDay: true, url: "https://example.com/hack", venue: "London" },
+      ],
+      { luma, partiful },
     );
     expect(events).toEqual([
       expect.objectContaining({ title: "Builder Cohort", url: "https://luma.com/claude-hd83", organiser: "Claude Startups", source: "Curated", knownHackathon: true }),
+      expect.objectContaining({ title: "Agents Hack", url: "https://partiful.com/e/abc", source: "Curated", knownHackathon: true }),
       expect.objectContaining({ title: "Off-Luma Hack", source: "Curated", knownHackathon: true }),
     ]);
   });

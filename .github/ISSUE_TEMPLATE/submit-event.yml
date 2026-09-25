@@ -7,7 +7,7 @@ body:
     id: url
     attributes:
       label: Event link
-      description: A Luma link is all we need. Otherwise, fill in the details below.
+      description: A Luma or Partiful link is all we need. Otherwise, fill in the details below.
       placeholder: https://luma.com/...
     validations:
       required: true
