@@ -8,10 +8,19 @@ No single source covers London hackathons well, so this merges several, then fil
 | --- | --- | --- |
 | Luma discover | `api.lu.ma` discover endpoint, London, searched for several build terms | Returns ~50 events per query, so we run one per term |
 | Luma organiser calendars | Public iCal feeds (`api.lu.ma/ics/get`) | Edit `ORGANISER_CALENDARS` in `lib/sources/luma.ts` |
-| Curated | Hand-added Luma links or full records | Edit `CURATED` in `lib/sources/curated.ts` |
+| Curated | Hand-added Luma or Partiful links, or full records | Edit `CURATED` in `lib/sources/curated.ts` |
+| Meetup | Public GraphQL search (`api.meetup.com/gql-ext`), tech category, London radius | Search is loose; the hackathon check does the filtering |
+| Cerebral Valley | Public events API filtered to "London, UK" | Ignores date filters, so every page is read |
 | Devpost | JSON API, in-person events | Thin for London |
 | MLH | JSON embedded in the season page | Mostly student events |
 | Eventbrite | JSON-LD on London search pages | Noisy; relies on the filters below |
+| ETHGlobal | Event list in the page's server components payload | ETHGlobal London is usually spring |
+| lablab.ai | Hackathon list in the page's server components payload | Mostly online; London legs only show in descriptions |
+| Devfolio | `__NEXT_DATA__` listing, then each UK-timezone event's page | Mostly India |
+
+The footer shows, per source, how many events it kept and how many no other source found. Use that to decide what to drop.
+
+Not included: DoraHacks (blocks scripts with a human check) and Eventbrite's organiser API (needs a token and a list of organisers).
 
 Filters (`lib/aggregate.ts`):
 
@@ -35,7 +44,7 @@ To find candidates, `pnpm suggest-calendars` lists calendars hosting London even
 
 ## Adding a single event
 
-For one-offs, and events that aren't on Luma, add the Luma URL or a full record to `CURATED` in `lib/sources/curated.ts`. Curated events skip the hackathon check. Visitors suggest events through the "Submit an event" issue form, labelled `event-submission`.
+For one-offs, and events that aren't on Luma, add the Luma or Partiful URL, or a full record to `CURATED` in `lib/sources/curated.ts`. Curated events skip the hackathon check. Visitors suggest events through the "Submit an event" issue form, labelled `event-submission`.
 
 ## Development
 
