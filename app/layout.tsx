@@ -1,10 +1,8 @@
-import type { Metadata } from "next";
-import { Hanken_Grotesk, IBM_Plex_Mono, Instrument_Serif } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.scss";
 
-const display = Instrument_Serif({ weight: "400", subsets: ["latin"], variable: "--font-display" });
-const body = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-body" });
-const mono = IBM_Plex_Mono({ weight: ["400", "500"], subsets: ["latin"], variable: "--font-mono" });
+const mono = JetBrains_Mono({ weight: ["400", "500", "700", "800"], subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
   title: "London hackathons",
@@ -13,9 +11,11 @@ export const metadata: Metadata = {
   alternates: { types: { "text/calendar": "/calendar.ics" } },
 };
 
+export const viewport: Viewport = { themeColor: "#0b0b0b" };
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html lang="en-GB" className={mono.variable}>
       <body>{children}</body>
     </html>
   );

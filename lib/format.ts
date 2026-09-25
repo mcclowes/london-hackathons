@@ -6,12 +6,9 @@ function part(iso: string, opts: Intl.DateTimeFormatOptions): string {
   return new Intl.DateTimeFormat("en-GB", { timeZone: TZ, ...opts }).format(new Date(iso));
 }
 
-export function monthKey(iso: string): string {
-  return part(iso, { month: "long", year: "numeric" });
-}
-
-export function dayNumber(iso: string): string {
-  return part(iso, { day: "numeric" });
+/** "OCT 07" */
+export function dateLabel(iso: string): string {
+  return `${part(iso, { month: "short" }).slice(0, 3)} ${part(iso, { day: "2-digit" })}`.toUpperCase();
 }
 
 export function weekday(iso: string): string {
@@ -32,16 +29,35 @@ export function timeRange(e: HackEvent): string {
   return multiDay ? `${time(e.start)}, ${until}` : `${time(e.start)}–${time(e.end)}`;
 }
 
-export function groupByMonth(events: HackEvent[]): [string, HackEvent[]][] {
-  const groups = new Map<string, HackEvent[]>();
-  for (const e of events) {
-    const key = monthKey(e.start);
-    groups.set(key, [...(groups.get(key) ?? []), e]);
-  }
-  return [...groups];
-}
-
 export function isThisWeek(iso: string, now = new Date()): boolean {
   const diff = Date.parse(iso) - now.getTime();
   return diff < 7 * 24 * 3600_000;
+}
+
+/** Coarse on purpose: the page is only rebuilt every six hours. */
+export function daysUntil(iso: string, now = new Date()): string {
+  const day = (d: Date) => Date.parse(d.toLocaleDateString("en-CA", { timeZone: TZ }));
+  const days = Math.round((day(new Date(iso)) - day(now)) / 86_400_000);
+  if (days <= 0) return "today";
+  if (days === 1) return "tomorrow";
+  return `in ${days} days`;
+}
+
+const utcStamp = (iso: string) => new Date(iso).toISOString().replace(/[-:]|\.\d{3}/g, "");
+const londonDate = (iso: string) => new Date(iso).toLocaleDateString("en-CA", { timeZone: TZ });
+const compact = (date: string) => date.replaceAll("-", "");
+
+export function googleCalendarUrl(e: HackEvent): string {
+  let dates: string;
+  if (e.allDay) {
+    const last = londonDate(e.end ?? e.start);
+    const after = new Date(Date.parse(last) + 86_400_000).toISOString().slice(0, 10);
+    dates = `${compact(londonDate(e.start))}/${compact(after)}`;
+  } else {
+    const end = e.end ?? new Date(Date.parse(e.start) + 3 * 3600_000).toISOString();
+    dates = `${utcStamp(e.start)}/${utcStamp(end)}`;
+  }
+  const params = new URLSearchParams({ action: "TEMPLATE", text: e.title, dates, details: e.url });
+  if (e.venue) params.set("location", e.venue);
+  return `https://calendar.google.com/calendar/render?${params}`;
 }

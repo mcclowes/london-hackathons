@@ -1,22 +1,13 @@
 :root {
-  --paper: #f2ede3;
-  --ink: #16140f;
-  --muted: #6d665a;
-  --rule: #d8d0c0;
-  --signal: #e8481c;
-  --chip: #e6dfd1;
-  color-scheme: light dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #12110e;
-    --ink: #efe9dc;
-    --muted: #9a917f;
-    --rule: #2d2a23;
-    --signal: #ff6a3d;
-    --chip: #221f19;
-  }
+  --bg: #0b0b0b;
+  --panel: #131313;
+  --ink: #f2f2f0;
+  --muted: #8b8b86;
+  --rule: #262626;
+  --line: #3a3a3a;
+  --orange: #ff4d00;
+  --yellow: #ffe81a;
+  color-scheme: dark;
 }
 
 *,
@@ -31,11 +22,11 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
+  background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-body), sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 15px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -44,6 +35,11 @@ a {
 }
 
 ::selection {
-  background: var(--signal);
-  color: var(--paper);
+  background: var(--yellow);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
 }
