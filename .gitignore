@@ -5,3 +5,8 @@ next-env.d.ts
 .vercel
 .env*.local
 .saggar/*.local.json
+
+# Added by saggar — local files that shouldn't be committed
+.saggar/**/*.local.*
+.saggar/scratchpad.md
+.saggar/jobs/
