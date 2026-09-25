@@ -6,7 +6,7 @@ No single source covers London hackathons well, so this merges several, then fil
 
 | Source | How | Notes |
 | --- | --- | --- |
-| Luma discover | `api.lu.ma` discover endpoint, London + tech category | Where most London builder events live |
+| Luma discover | `api.lu.ma` discover endpoint, London, searched for several build terms | Returns ~50 events per query, so we run one per term |
 | Luma organiser calendars | Public iCal feeds (`api.lu.ma/ics/get`) | Edit `ORGANISER_CALENDARS` in `lib/sources/luma.ts` |
 | Curated | Hand-added Luma links or full records | Edit `CURATED` in `lib/sources/curated.ts` |
 | Devpost | JSON API, in-person events | Thin for London |
@@ -30,6 +30,8 @@ curl -s "https://api.lu.ma/url?url=<luma-slug>" | jq -r .data.calendar.api_id
 ```
 
 Add it to `ORGANISER_CALENDARS`. Non-London events in their feed are filtered out.
+
+To find candidates, `pnpm suggest-calendars` lists calendars hosting London events that we don't follow yet, ranked by how many look like build sessions.
 
 ## Adding a single event
 

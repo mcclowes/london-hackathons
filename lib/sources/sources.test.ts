@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { fromDevpost, parseDevpostDates } from "./devpost";
 import { fetchCurated, lumaSlug } from "./curated";
 import { fromEventbrite, parseEventbritePage } from "./eventbrite";
+import { fetchDiscoverEntries, fromDiscoverEntry, ORGANISER_CALENDARS, suggestCalendars } from "./luma";
 import { currentSeason, fromMlh, parseMlhPage } from "./mlh";
 
 describe("parseDevpostDates", () => {
@@ -96,5 +97,55 @@ describe("curated", () => {
       expect.objectContaining({ title: "Builder Cohort", url: "https://luma.com/claude-hd83", organiser: "Claude Startups", source: "Curated", knownHackathon: true }),
       expect.objectContaining({ title: "Off-Luma Hack", source: "Curated", knownHackathon: true }),
     ]);
+  });
+});
+
+describe("Luma discover", () => {
+  const entry = (id: string, calendar: { api_id: string; name: string }, name = "London Hackathon") => ({
+    event: { api_id: id, name, start_at: "2026-10-01T09:00:00Z", url: id, coordinate: null },
+    calendar,
+  });
+
+  it("marks events from followed calendars", () => {
+    const followed = fromDiscoverEntry(entry("a", { api_id: ORGANISER_CALENDARS[0].id, name: "x" }));
+    const other = fromDiscoverEntry(entry("b", { api_id: "cal-other", name: "Other" }));
+    expect(followed.followedOrganiser).toBe(true);
+    expect(other.followedOrganiser).toBeUndefined();
+  });
+
+  it("runs every query and drops repeats", async () => {
+    const seen: string[] = [];
+    const entries = await fetchDiscoverEntries(["", "hackathon"], async (query) => {
+      seen.push(query);
+      return [entry("a", { api_id: "cal-1", name: "One" }), entry(query || "base", { api_id: "cal-1", name: "One" })];
+    });
+    expect(seen).toEqual(["", "hackathon"]);
+    expect(entries.map((e) => e.event.api_id)).toEqual(["a", "base", "hackathon"]);
+  });
+});
+
+describe("suggestCalendars", () => {
+  it("ranks unfollowed calendars by build sessions, then London events", () => {
+    const e = (cal: string, name: string) => ({
+      event: { api_id: `${cal}-${name}`, name, start_at: "2026-10-01T09:00:00Z", url: "x", coordinate: null },
+      calendar: { api_id: cal, name: cal, slug: cal },
+    });
+    const ranked = suggestCalendars(
+      [
+        e("cal-busy", "Dinner"),
+        e("cal-busy", "Breakfast"),
+        e("cal-busy", "Drinks"),
+        e("cal-hacks", "Agents Hackathon"),
+        e("cal-hacks", "Networking"),
+        { ...e("cal-personal", "Hackathon"), calendar: { api_id: "cal-personal", name: "Personal", slug: null } },
+        e(ORGANISER_CALENDARS[0].id, "Hackathon"),
+      ],
+      new Set([ORGANISER_CALENDARS[0].id]),
+    );
+    expect(ranked.map((c) => [c.id, c.builds, c.events])).toEqual([
+      ["cal-hacks", 1, 2],
+      ["cal-busy", 0, 3],
+    ]);
+    expect(ranked[0].titles).toEqual(["Agents Hackathon", "Networking"]);
   });
 });
