@@ -16,3 +16,15 @@ export async function fetchText(url: string): Promise<string> {
 export async function fetchJson<T>(url: string): Promise<T> {
   return JSON.parse(await fetchText(url)) as T;
 }
+
+export async function postJson<T>(url: string, body: unknown): Promise<T> {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "user-agent": USER_AGENT, "content-type": "application/json" },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(15_000),
+    next: { revalidate: REVALIDATE_SECONDS },
+  } as RequestInit);
+  if (!res.ok) throw new Error(`${res.status} from ${new URL(url).host}`);
+  return (await res.json()) as T;
+}

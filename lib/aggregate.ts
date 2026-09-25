@@ -4,10 +4,11 @@ import { curated } from "./sources/curated";
 import { devpost } from "./sources/devpost";
 import { eventbrite } from "./sources/eventbrite";
 import { lumaCalendars, lumaDiscover } from "./sources/luma";
+import { meetup } from "./sources/meetup";
 import { mlh } from "./sources/mlh";
 import type { HackEvent, RawEvent, Source, SourceResult } from "./types";
 
-export const SOURCES: Source[] = [lumaDiscover, lumaCalendars, curated, devpost, mlh, eventbrite];
+export const SOURCES: Source[] = [lumaDiscover, lumaCalendars, curated, devpost, mlh, eventbrite, meetup];
 
 export interface Aggregation {
   events: HackEvent[];
