@@ -1,5 +1,5 @@
 import { fetchText } from "../http";
-import { decodeFlight } from "../nextData";
+import { decodeFlight, sliceJson } from "../nextData";
 import type { RawEvent, Source } from "../types";
 
 export interface EthGlobalEvent {
@@ -19,23 +19,7 @@ export function parseEthGlobalPage(html: string): EthGlobalEvent[] {
   const flight = decodeFlight(html);
   const at = flight.indexOf('"events":[');
   if (at < 0) throw new Error("ETHGlobal page structure changed");
-  return JSON.parse(sliceJsonArray(flight, at + '"events":'.length));
-}
-
-/** The array sits mid-stream, so read up to its matching bracket. */
-function sliceJsonArray(text: string, start: number): string {
-  let depth = 0;
-  let inString = false;
-  for (let i = start; i < text.length; i++) {
-    const ch = text[i];
-    if (inString) {
-      if (ch === "\\") i++;
-      else if (ch === '"') inString = false;
-    } else if (ch === '"') inString = true;
-    else if (ch === "[" || ch === "{") depth++;
-    else if ((ch === "]" || ch === "}") && --depth === 0) return text.slice(start, i + 1);
-  }
-  throw new Error("ETHGlobal events array is unterminated");
+  return JSON.parse(sliceJson(flight, at + '"events":'.length));
 }
 
 export function fromEthGlobal(e: EthGlobalEvent): RawEvent {
