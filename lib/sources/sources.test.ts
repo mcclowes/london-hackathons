@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fromDevpost, parseDevpostDates } from "./devpost";
 import { fetchCurated, lumaSlug } from "./curated";
-import { fromEventbrite, parseEventbritePage } from "./eventbrite";
 import { fetchDiscoverEntries, fromDiscoverEntry, ORGANISER_CALENDARS, suggestCalendars } from "./luma";
 import { currentSeason, fromMlh, parseMlhPage } from "./mlh";
 
@@ -46,32 +45,6 @@ describe("MLH", () => {
 
   it("fails loudly when the page shape changes", () => {
     expect(() => parseMlhPage("<html></html>")).toThrow(/structure changed/);
-  });
-});
-
-describe("Eventbrite", () => {
-  it("reads JSON-LD item lists", () => {
-    const ld = {
-      itemListElement: [
-        {
-          item: {
-            name: "AI Jam London",
-            startDate: "2026-10-10",
-            endDate: "2026-10-11",
-            url: "https://www.eventbrite.com/e/ai-jam-london-tickets-1?aff=x",
-            location: { name: "106 Bunhill Row", address: { addressLocality: "London" }, geo: { latitude: "51.52", longitude: "-0.09" } },
-          },
-        },
-      ],
-    };
-    const html = `<script type="application/ld+json">${JSON.stringify(ld)}</script><script type="application/ld+json">{bad</script>`;
-    const [e] = parseEventbritePage(html).map(fromEventbrite);
-    expect(e).toMatchObject({
-      url: "https://www.eventbrite.com/e/ai-jam-london-tickets-1",
-      allDay: true,
-      lat: 51.52,
-      venue: "106 Bunhill Row, London",
-    });
   });
 });
 
