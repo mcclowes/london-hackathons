@@ -2,6 +2,7 @@ import { isBuildSession, isHackathon } from "./classify";
 import { isInLondon } from "./london";
 import { cerebralValley } from "./sources/cerebralValley";
 import { curated } from "./sources/curated";
+import { devfolio } from "./sources/devfolio";
 import { devpost } from "./sources/devpost";
 import { eventbrite } from "./sources/eventbrite";
 import { ethGlobal } from "./sources/ethglobal";
@@ -11,7 +12,7 @@ import { meetup } from "./sources/meetup";
 import { mlh } from "./sources/mlh";
 import type { HackEvent, RawEvent, Source, SourceResult } from "./types";
 
-export const SOURCES: Source[] = [lumaDiscover, lumaCalendars, curated, devpost, mlh, eventbrite, meetup, cerebralValley, ethGlobal, lablab];
+export const SOURCES: Source[] = [lumaDiscover, lumaCalendars, curated, devpost, mlh, eventbrite, meetup, cerebralValley, ethGlobal, lablab, devfolio];
 
 export interface Aggregation {
   events: HackEvent[];
