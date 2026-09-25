@@ -33,6 +33,8 @@ export interface SourceResult {
   name: string;
   ok: boolean;
   count: number;
+  /** Events no other source found. */
+  unique?: number;
   error?: string;
 }
 

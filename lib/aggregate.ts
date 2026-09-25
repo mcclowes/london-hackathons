@@ -86,11 +86,23 @@ export function dedupe(events: RawEvent[]): HackEvent[] {
   });
 }
 
+/** Events only this source found, after dedupe. Shows which sources earn their keep. */
+function countUnique(events: HackEvent[], sourceOf: Map<string, string>): Map<string, number> {
+  const unique = new Map<string, number>();
+  for (const e of events) {
+    const found = new Set(e.sources.map((label) => sourceOf.get(label)));
+    const [only] = found;
+    if (found.size === 1 && only) unique.set(only, (unique.get(only) ?? 0) + 1);
+  }
+  return unique;
+}
+
 export async function aggregate(sources = SOURCES, now = new Date()): Promise<Aggregation> {
   const settled = await Promise.allSettled(sources.map((s) => s.fetch()));
 
   const results: SourceResult[] = [];
   const relevant: RawEvent[] = [];
+  const sourceOf = new Map<string, string>();
   settled.forEach((r, i) => {
     const name = sources[i].name;
     if (r.status === "rejected") {
@@ -98,10 +110,13 @@ export async function aggregate(sources = SOURCES, now = new Date()): Promise<Ag
       return;
     }
     const kept = r.value.filter((e) => isRelevant(e, now));
+    for (const e of kept) sourceOf.set(e.source, name);
     relevant.push(...kept);
     results.push({ name, ok: true, count: kept.length });
   });
 
   const events = dedupe(relevant).sort((a, b) => a.start.localeCompare(b.start));
+  const unique = countUnique(events, sourceOf);
+  for (const r of results) if (r.ok) r.unique = unique.get(r.name) ?? 0;
   return { events, sources: results, generatedAt: now.toISOString() };
 }

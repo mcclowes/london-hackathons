@@ -88,7 +88,7 @@ export default async function Home() {
             {sources.map((s) => (
               <li key={s.name} data-ok={s.ok}>
                 <span>{s.name}</span>
-                <span>{s.ok ? `${s.count} kept` : `failed: ${s.error}`}</span>
+                <span>{s.ok ? `${s.count} kept · ${s.unique} only here` : `failed: ${s.error}`}</span>
               </li>
             ))}
           </ul>
@@ -124,8 +124,8 @@ function Intro() {
         run the board.
       </h1>
       <p className={styles.lede}>
-        Every London hackathon in one feed, merged from Luma, Devpost, MLH and Eventbrite. Subscribe once and
-        they land in your calendar.
+        Every London hackathon in one feed, merged from Luma, Meetup, Devpost, MLH, Cerebral Valley, Eventbrite
+        and more. Subscribe once and they land in your calendar.
       </p>
     </div>
   );

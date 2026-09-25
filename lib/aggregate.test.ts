@@ -63,8 +63,24 @@ describe("aggregate", () => {
     );
     expect(result.events.map((e) => e.title)).toEqual(["Some MLH event", "Real-Time Video Agents Hack - LDN"]);
     expect(result.sources).toEqual([
-      { name: "good", ok: true, count: 2 },
+      { name: "good", ok: true, count: 2, unique: 2 },
       { name: "broken", ok: false, count: 0, error: "503 from x" },
+    ]);
+  });
+
+  it("counts events that only one source found, across its labels", async () => {
+    const result = await aggregate(
+      [
+        { name: "calendars", fetch: async () => [{ ...base, source: "Cal A" }, { ...base, url: "https://luma.com/b", title: "B Hack", source: "Cal B" }] },
+        { name: "discover", fetch: async () => [{ ...base, source: "Luma" }] },
+        { name: "empty", fetch: async () => [] },
+      ],
+      NOW,
+    );
+    expect(result.sources.map((s) => [s.name, s.count, s.unique])).toEqual([
+      ["calendars", 2, 1],
+      ["discover", 1, 0],
+      ["empty", 0, 0],
     ]);
   });
 });
