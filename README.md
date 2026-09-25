@@ -15,7 +15,7 @@ No single source covers London hackathons well, so this merges several, then fil
 Filters (`lib/aggregate.ts`):
 
 - **London:** within 30km of central London by coordinates, or "London" in the venue when there are none.
-- **Hackathon:** Devpost and MLH are trusted. Everything else must look like a hackathon by title (`lib/classify.ts`).
+- **Hackathon:** Devpost and MLH are trusted. Everything else must look like a hackathon by title (`lib/classify.ts`). Followed organiser calendars get a wider net: hands-on workshops, lock-ins, builder cohorts and demo nights count too.
 - **Dedupe:** by canonical URL, or by normalised title on the same day. The most detailed record wins, and every source is credited.
 
 The page, `/calendar.ics` and `/events.json` are statically rendered and revalidated every six hours. A failing source is reported in the footer and doesn't take the others down.

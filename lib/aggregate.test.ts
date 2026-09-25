@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregate, dedupe } from "./aggregate";
+import { aggregate, dedupe, isRelevant } from "./aggregate";
 import type { RawEvent } from "./types";
 
 const NOW = new Date("2026-09-25T12:00:00Z");
@@ -31,6 +31,15 @@ describe("dedupe", () => {
 
   it("keeps distinct events apart", () => {
     expect(dedupe([base, { ...base, url: "https://luma.com/other", start: "2026-10-18T09:00:00Z" }])).toHaveLength(2);
+  });
+});
+
+describe("isRelevant", () => {
+  const workshop = { ...base, title: "Hands-on workshop: build an agent" };
+
+  it("accepts build sessions only from followed organisers", () => {
+    expect(isRelevant({ ...workshop, followedOrganiser: true }, NOW)).toBe(true);
+    expect(isRelevant(workshop, NOW)).toBe(false);
   });
 });
 

@@ -98,7 +98,8 @@ export default async function Home() {
           <p className={styles.small}>{ORGANISER_CALENDARS.map((c) => c.name).join(" · ")}</p>
           <p className={styles.small}>
             Keyword-tagged listings are noisy, so anything not from a hackathon-only source must look like a
-            hackathon by title and sit within 30km of central London. Topic tags are guessed from titles.
+            hackathon by title and sit within 30km of central London. Followed organisers also count hands-on
+            workshops and build sessions. Topic tags are guessed from titles.
           </p>
         </div>
       </footer>

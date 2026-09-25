@@ -13,6 +13,18 @@ export const ORGANISER_CALENDARS = [
   { name: "AI Tinkerers", id: "cal-UCNcNUQEeTHdcnt" },
   { name: "Google DeepMind", id: "cal-7Q5A70Bz5Idxopu" },
   { name: "Solana Hacker Houses", id: "cal-dLrjJu0Dqay3WBe" },
+  { name: "Claude Startups", id: "cal-lRtuNbDBacd0u5K" },
+  { name: "Claude Community", id: "cal-TOpA5LAFfuDeFpu" },
+  { name: "LangChain", id: "cal-mvNH1VHlaFtSMFx" },
+  { name: "Intercom", id: "cal-scIJjQDKflgPtvr" },
+  { name: "Raycast", id: "cal-KwZeQ0HC9LFQ3Fk" },
+  { name: "Linear", id: "cal-yQRC7YwpEmCUqGF" },
+  { name: "PostHog", id: "cal-qJCKF7ct5XX3pwB" },
+  { name: "Cloudflare", id: "cal-BM6bfUtS2kt0waC" },
+  { name: "Together AI", id: "cal-Icg56OoJNDuOt3e" },
+  { name: "Cerebras", id: "cal-aXdtH9ebHo9YaLg" },
+  { name: "fal", id: "cal-u3vVIuSFJd7RqNB" },
+  { name: "Convex", id: "cal-cMVr4fliuzUTew9" },
 ];
 
 interface DiscoverEntry {
@@ -99,6 +111,7 @@ export function fromLumaVEvent(v: VEvent, calendarName: string): RawEvent {
     venue: location,
     lat: hasGeo ? lat : undefined,
     lng: hasGeo ? lng : undefined,
+    followedOrganiser: true,
   };
 }
 

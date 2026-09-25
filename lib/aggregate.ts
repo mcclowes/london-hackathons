@@ -1,4 +1,4 @@
-import { isHackathon } from "./classify";
+import { isBuildSession, isHackathon } from "./classify";
 import { isInLondon } from "./london";
 import { devpost } from "./sources/devpost";
 import { eventbrite } from "./sources/eventbrite";
@@ -40,7 +40,9 @@ export function isRelevant(e: RawEvent, now: Date): boolean {
   return (
     finishes >= now.getTime() &&
     isInLondon(e) &&
-    (e.knownHackathon === true || isHackathon(e.title))
+    (e.knownHackathon === true ||
+      isHackathon(e.title) ||
+      (e.followedOrganiser === true && isBuildSession(e.title)))
   );
 }
 

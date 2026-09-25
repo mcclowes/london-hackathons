@@ -43,6 +43,7 @@ describe("fromLumaVEvent", () => {
       lng: -0.09,
       venue: undefined,
       allDay: false,
+      followedOrganiser: true,
     });
   });
 });

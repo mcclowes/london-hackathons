@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isHackathon } from "./classify";
+import { isBuildSession, isHackathon } from "./classify";
 import { isInLondon } from "./london";
 
 describe("isHackathon", () => {
@@ -21,6 +21,23 @@ describe("isHackathon", () => {
     "Hackney Wick Badminton Group",
     "Biohacking breakfast",
   ])("rejects %s", (title) => expect(isHackathon(title)).toBe(false));
+});
+
+describe("isBuildSession", () => {
+  it.each([
+    "London | Claude Founder House: Builder Cohort",
+    "Claude Code Lock-In with Index",
+    "Hands-On Workshop — Build an Agentic Application with LangChain & CopilotKit",
+    "London AI demo night",
+    "Raycast Hackathon London",
+  ])("accepts %s", (title) => expect(isBuildSession(title)).toBe(true));
+
+  it.each([
+    "Anthropic London Dinner",
+    "Anthropic London VC platform breakfast",
+    "Interrupt London, The Agent Conference by LangChain",
+    "Growth hacking workshop",
+  ])("rejects %s", (title) => expect(isBuildSession(title)).toBe(false));
 });
 
 describe("isInLondon", () => {

@@ -13,6 +13,8 @@ export interface RawEvent {
   lng?: number;
   /** Source only lists hackathons, so skip the keyword check. */
   knownHackathon?: boolean;
+  /** From a calendar we chose to follow, so hands-on workshops count too. */
+  followedOrganiser?: boolean;
 }
 
 export interface HackEvent {
