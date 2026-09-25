@@ -13,6 +13,7 @@ export const revalidate = 21600;
 const HOST = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? "localhost:3000";
 const WEBCAL = `webcal://${HOST}/calendar.ics`;
 const GOOGLE_SUBSCRIBE = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(WEBCAL)}`;
+const SUBMIT_URL = "https://github.com/mcclowes/london-hackathons/issues/new?template=submit-event.yml";
 
 export default async function Home() {
   const { events, sources, generatedAt } = await aggregate();
@@ -100,6 +101,12 @@ export default async function Home() {
             Keyword-tagged listings are noisy, so anything not from a hackathon-only source must look like a
             hackathon by title and sit within 30km of central London. Followed organisers also count hands-on
             workshops and build sessions. Topic tags are guessed from titles.
+          </p>
+          <p className={styles.small}>
+            Missing one?{" "}
+            <a href={SUBMIT_URL} target="_blank" rel="noreferrer">
+              Submit an event →
+            </a>
           </p>
         </div>
       </footer>

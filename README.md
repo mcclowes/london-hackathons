@@ -8,6 +8,7 @@ No single source covers London hackathons well, so this merges several, then fil
 | --- | --- | --- |
 | Luma discover | `api.lu.ma` discover endpoint, London + tech category | Where most London builder events live |
 | Luma organiser calendars | Public iCal feeds (`api.lu.ma/ics/get`) | Edit `ORGANISER_CALENDARS` in `lib/sources/luma.ts` |
+| Curated | Hand-added Luma links or full records | Edit `CURATED` in `lib/sources/curated.ts` |
 | Devpost | JSON API, in-person events | Thin for London |
 | MLH | JSON embedded in the season page | Mostly student events |
 | Eventbrite | JSON-LD on London search pages | Noisy; relies on the filters below |
@@ -29,6 +30,10 @@ curl -s "https://api.lu.ma/url?url=<luma-slug>" | jq -r .data.calendar.api_id
 ```
 
 Add it to `ORGANISER_CALENDARS`. Non-London events in their feed are filtered out.
+
+## Adding a single event
+
+For one-offs, and events that aren't on Luma, add the Luma URL or a full record to `CURATED` in `lib/sources/curated.ts`. Curated events skip the hackathon check. Visitors suggest events through the "Submit an event" issue form, labelled `event-submission`.
 
 ## Development
 

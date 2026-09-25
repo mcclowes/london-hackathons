@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fromDevpost, parseDevpostDates } from "./devpost";
+import { fetchCurated, lumaSlug } from "./curated";
 import { fromEventbrite, parseEventbritePage } from "./eventbrite";
 import { currentSeason, fromMlh, parseMlhPage } from "./mlh";
 
@@ -70,5 +71,30 @@ describe("Eventbrite", () => {
       lat: 51.52,
       venue: "106 Bunhill Row, London",
     });
+  });
+});
+
+describe("curated", () => {
+  it.each([
+    ["claude-hd83", "claude-hd83"],
+    ["https://luma.com/claude-hd83", "claude-hd83"],
+    ["https://lu.ma/claude-hd83?tk=abc", "claude-hd83"],
+  ])("reads the Luma slug from %s", (input, slug) => expect(lumaSlug(input)).toBe(slug));
+
+  it("returns null for non-Luma URLs", () => expect(lumaSlug("https://example.com/hack")).toBeNull());
+
+  it("fetches Luma entries and trusts every curated event", async () => {
+    const lookup = async (slug: string) => ({
+      event: { name: "Builder Cohort", start_at: "2026-10-01T13:00:00Z", url: slug, coordinate: null },
+      calendar: { name: "Claude Startups" },
+    });
+    const events = await fetchCurated(
+      ["https://luma.com/claude-hd83", { title: "Off-Luma Hack", start: "2026-10-02", allDay: true, url: "https://example.com/hack", venue: "London" }],
+      lookup,
+    );
+    expect(events).toEqual([
+      expect.objectContaining({ title: "Builder Cohort", url: "https://luma.com/claude-hd83", organiser: "Claude Startups", source: "Curated", knownHackathon: true }),
+      expect.objectContaining({ title: "Off-Luma Hack", source: "Curated", knownHackathon: true }),
+    ]);
   });
 });

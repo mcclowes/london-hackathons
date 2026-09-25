@@ -27,7 +27,7 @@ export const ORGANISER_CALENDARS = [
   { name: "Convex", id: "cal-cMVr4fliuzUTew9" },
 ];
 
-interface DiscoverEntry {
+export interface DiscoverEntry {
   event: {
     name: string;
     start_at: string;
