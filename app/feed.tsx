@@ -82,7 +82,20 @@ export function Feed({ events, intro, featured }: Props) {
         </header>
 
         {shown.length === 0 ? (
-          <p className={styles.empty}>// No matches. Try another filter.</p>
+          <div className={styles.empty}>
+            <h3>No signal.</h3>
+            <p>Try another stack, venue, or filter.</p>
+            <button
+              type="button"
+              className={styles.ghost}
+              onClick={() => {
+                setFilter("all");
+                setQuery("");
+              }}
+            >
+              Reset
+            </button>
+          </div>
         ) : (
           <ol className={styles.list}>
             {shown.map((e) => (
