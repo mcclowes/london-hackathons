@@ -29,6 +29,12 @@ export default async function Home() {
           <a className={styles.primary} href={`webcal://${HOST}/calendar.ics`}>
             Subscribe to calendar
           </a>
+          <a
+            className={styles.secondary}
+            href={`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(`webcal://${HOST}/calendar.ics`)}`}
+          >
+            Google Calendar
+          </a>
           <a className={styles.secondary} href="/calendar.ics">
             .ics
           </a>
