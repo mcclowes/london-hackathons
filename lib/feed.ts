@@ -1,4 +1,4 @@
-import { dateLabel, isThisWeek, timeRange, weekday } from "./format";
+import { type Soon, dateLabel, soon, timeRange, weekday } from "./format";
 import { type Format, type Topic, format, isWeekend, topics } from "./tags";
 import type { HackEvent } from "./types";
 
@@ -16,7 +16,8 @@ export interface FeedEvent {
   weekend: boolean;
   topics: Topic[];
   format?: Format;
-  soon: boolean;
+  start: string;
+  soon?: Soon;
 }
 
 export function toFeedEvent(e: HackEvent, now: Date): FeedEvent {
@@ -33,7 +34,8 @@ export function toFeedEvent(e: HackEvent, now: Date): FeedEvent {
     weekend: isWeekend(e.start),
     topics: topics(e.title),
     format: format(e.venue),
-    soon: isThisWeek(e.start, now),
+    start: e.start,
+    soon: soon(e.start, now),
   };
 }
 

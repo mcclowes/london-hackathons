@@ -29,15 +29,29 @@ export function timeRange(e: HackEvent): string {
   return multiDay ? `${time(e.start)}, ${until}` : `${time(e.start)}–${time(e.end)}`;
 }
 
+/** Calendar days from `now` to `iso` in London; negative once the day has passed. */
+function daysAway(iso: string, now: Date): number {
+  const day = (d: Date) => Date.parse(d.toLocaleDateString("en-CA", { timeZone: TZ }));
+  return Math.round((day(new Date(iso)) - day(now)) / 86_400_000);
+}
+
+export type Soon = "today" | "tomorrow" | "this week";
+
+/** Events already under way count as today. */
+export function soon(iso: string, now = new Date()): Soon | undefined {
+  const days = daysAway(iso, now);
+  if (days <= 0) return "today";
+  if (days === 1) return "tomorrow";
+  if (days < 7) return "this week";
+}
+
 export function isThisWeek(iso: string, now = new Date()): boolean {
-  const diff = Date.parse(iso) - now.getTime();
-  return diff < 7 * 24 * 3600_000;
+  return soon(iso, now) !== undefined;
 }
 
 /** Coarse on purpose: the page is only rebuilt every six hours. */
 export function daysUntil(iso: string, now = new Date()): string {
-  const day = (d: Date) => Date.parse(d.toLocaleDateString("en-CA", { timeZone: TZ }));
-  const days = Math.round((day(new Date(iso)) - day(now)) / 86_400_000);
+  const days = daysAway(iso, now);
   if (days <= 0) return "today";
   if (days === 1) return "tomorrow";
   return `in ${days} days`;

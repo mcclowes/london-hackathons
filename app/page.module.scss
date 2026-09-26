@@ -324,6 +324,12 @@ $max: 1320px;
   font-weight: 700;
 }
 
+.tagToday {
+  @extend .tagSoon;
+  border-color: var(--yellow);
+  background: var(--yellow);
+}
+
 // Featured
 
 .featured {
