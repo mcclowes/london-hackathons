@@ -19,7 +19,20 @@ const feed = toFeedEvent(event, new Date("2026-10-01T00:00:00Z"));
 describe("toFeedEvent", () => {
   it("formats in London time", () => {
     expect(feed).toMatchObject({ date: "OCT 24", weekday: "Sat", time: "09:00–21:00", weekend: true });
-    expect(feed).toMatchObject({ topics: ["AI", "WEB3"], format: "in-person", soon: false });
+    expect(feed).toMatchObject({ topics: ["AI", "WEB3"], format: "in-person" });
+    expect(feed.soon).toBeUndefined();
+  });
+});
+
+describe("soon", () => {
+  it.each([
+    ["2026-10-24T07:00:00Z", "today"],
+    ["2026-10-23T22:00:00Z", "today"], // started last night, still running
+    ["2026-10-24T23:30:00Z", "tomorrow"], // 00:30 BST on the 25th
+    ["2026-10-30T12:00:00Z", "this week"],
+    ["2026-10-31T12:00:00Z", undefined],
+  ])("%s is %s", (start, expected) => {
+    expect(toFeedEvent({ ...event, start }, new Date("2026-10-24T06:00:00Z")).soon).toBe(expected);
   });
 });
 
