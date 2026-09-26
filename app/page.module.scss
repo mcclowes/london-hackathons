@@ -772,6 +772,53 @@ $max: 1320px;
   }
 }
 
+.signup {
+  margin: 0 0 24px;
+}
+
+.signupRow {
+  display: flex;
+  height: 44px;
+  margin-bottom: 10px;
+  border: 1px solid var(--line);
+
+  &:focus-within {
+    border-color: var(--yellow);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: 0 14px;
+    background: var(--panel);
+    border: 0;
+    outline: 0;
+    color: var(--ink);
+    font: inherit;
+    font-size: 14px;
+
+    &::placeholder {
+      color: var(--muted);
+    }
+  }
+
+  button {
+    @extend %caps;
+    padding: 0 18px;
+    background: var(--yellow);
+    border: 0;
+    color: var(--bg);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--ink);
+    }
+  }
+}
+
 @keyframes blink {
   50% {
     opacity: 0;
