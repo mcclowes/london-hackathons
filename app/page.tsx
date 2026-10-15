@@ -4,6 +4,7 @@ import { daysUntil, googleCalendarUrl, isThisWeek } from "@/lib/format";
 import { ORGANISER_CALENDARS } from "@/lib/sources/luma";
 import type { HackEvent } from "@/lib/types";
 import { Feed } from "./feed";
+import { Signup } from "./signup";
 import styles from "./page.module.scss";
 import { Tags } from "./tags";
 
@@ -95,6 +96,8 @@ export default async function Home() {
           <p className={styles.small}>Refreshed {refreshed}. Rebuilt every six hours.</p>
         </div>
         <div>
+          <h3>// Weekly email</h3>
+          <Signup />
           <h3>// Organisers followed</h3>
           <p className={styles.small}>{ORGANISER_CALENDARS.map((c) => c.name).join(" · ")}</p>
           <p className={styles.small}>
