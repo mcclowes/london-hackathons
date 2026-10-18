@@ -46,6 +46,23 @@ To find candidates, `pnpm suggest-calendars` lists calendars hosting London even
 
 For one-offs, and events that aren't on Luma, add the Luma or Partiful URL, or a full record to `CURATED` in `lib/sources/curated.ts`. Curated events skip the hackathon check. Visitors suggest events through the "Submit an event" issue form, labelled `event-submission`.
 
+## Weekly email
+
+Every Monday at 07:00 UTC, Vercel Cron calls `/api/roundup`. It sends a [Resend](https://resend.com) broadcast listing this week's events and the rest of the next four weeks. With nothing in that window, nothing is sent. The signup form in the footer adds people to a Resend segment; Resend handles unsubscribes.
+
+Setup:
+
+1. Verify a sending domain in Resend and create a segment.
+2. Set `RESEND_API_KEY`, `RESEND_SEGMENT_ID`, `ROUNDUP_FROM` (e.g. `London Hackathons <roundup@yourdomain>`) and `CRON_SECRET` in Vercel.
+
+To check the email without sending it:
+
+```sh
+curl -H "Authorization: Bearer $CRON_SECRET" "https://<host>/api/roundup?preview" > roundup.html
+```
+
+The broadcast name carries the date, so a repeated cron run on the same day sends nothing.
+
 ## Development
 
 ```sh
